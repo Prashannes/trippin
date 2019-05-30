@@ -11,6 +11,7 @@ def create_table():
 
 conn = sqlite3.connect('database.db')
 c = conn.cursor()
+drop_table()
 create_table() 
 conn.commit()
 conn.close()
