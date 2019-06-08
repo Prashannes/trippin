@@ -36,7 +36,7 @@ class V0Api:
 
     def create_account(self):
         user = User.fromDict(request.values)
-        #self.accountManager.create_account(user=user)
+        self.accountManager.create_account(user=user)
         savedUser = self.accountManager.create_account(user=user)
         if savedUser is not None:
             return Response("CREATED", status=201, mimetype='application/json')
