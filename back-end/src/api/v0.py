@@ -36,7 +36,7 @@ class V0Api:
 
     def create_account(self):
         user = User.fromDict(request.values)
-        self.accountManager.create_account(user=user)
+        #self.accountManager.create_account(user=user)
         savedUser = self.accountManager.create_account(user=user)
         if savedUser is not None:
             return Response("CREATED", status=201, mimetype='application/json')
@@ -45,6 +45,9 @@ class V0Api:
         # add_entry({'email':request.values['email'], 'password':request.values['password'], 'nickname':request.values['nickname']})
 
     def get_account(self):
+        return Response("OKAY :D::D", status=200)
+    
+    def get_account():
         return Response("OKAY :D::D", status=200)
 
     def run(self, host='0.0.0.0', port=5000, debug=False):
