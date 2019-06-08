@@ -10,7 +10,7 @@ class AccountManager:
         c = conn.cursor()
         print('WE GOT HERE\n')
         print('user:', str(user))
-        c.execute(f"INSERT INTO accounts VALUES('{user.email}', '{user.password}', '{user.nickname}')")
+        c.execute("INSERT INTO accounts VALUES('" + user.email + "', '" + user.password + "', '" + user.nickname + "')")
         conn.commit()
         return "hello"
 
