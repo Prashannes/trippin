@@ -8,12 +8,7 @@ class User:
         self.nickname = nickname
 
     def __str__(self):
-        return User(
-            email=self.email,
-            password=self.password,
-            nickname=self.nickname,
-        )
-        #return f'User(email={self.email}, password={self.password}, nickname={self.nickname})'
+        return f'User(email={self.email}, password={self.password}, nickname={self.nickname}'
 
     @staticmethod
     def fromDict(userDict):
