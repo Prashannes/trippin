@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Roadtrip</string>
+
+    <!--Login Activity-->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+
+    <!--Register Activity-->
+    <string name="sign_up">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="nickname">Nickname</string>
+    <string name="repassword">Re-enter Password</string>
+
+    <!--Home Activity-->
+    <string name="create_trip">Create a Trip</string>
+    <string name="join_trip">Join a Trip</string>
+    <string name="logout">Logout</string>
+
+    <!--Create Trip Activity-->
+    <string name="creating_trip">Creating Trip</string>
+    <string name="destination">Destination</string>
+    <string name="next">Next</string>
+
+    <!--Join Trip Activity-->
+    <string name="joining_trip">Joining Trip</string>
+    <string name="join">Join</string>
+    <string name="enter_trip_code">Enter your trip code</string>
+
+    <!--Lobby Activity-->
+    <string name="your_code">Your Code</string>
+    <string name="members">Members</string>
+    <string name="start">Start</string>
+    <string name="empty">Empty</string>
+
+</resources>
