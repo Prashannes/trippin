@@ -46,9 +46,7 @@ class V0Api:
 
     def get_account(self):
         return Response("OKAY :D::D", status=200)
-    
-    def get_account():
-        return Response("OKAY :D::D", status=200)
+   
 
     def run(self, host='0.0.0.0', port=5000, debug=False):
         self.app.run(host=host, port=port, debug=debug)
