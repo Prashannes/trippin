@@ -31,7 +31,7 @@ class V0Api:
     def __init__(self, accountManager):
         self.app = FlaskAppWrapper(__name__)
         self.app.add_endpoint(endpoint='/accounts', handler=self.create_account, method='POST')
-        #self.app.add_endpoint(endpoint='/accounts', handler=self.get_account, method='GET')
+        self.app.add_endpoint(endpoint='/accounts', handler=self.get_account, method='GET')
         self.accountManager = accountManager
 
     def create_account(self):
@@ -46,7 +46,6 @@ class V0Api:
 
     def get_account(self):
         return Response("OKAY :D::D", status=200)
-   
 
     def run(self, host='0.0.0.0', port=5000, debug=False):
         self.app.run(host=host, port=port, debug=debug)
