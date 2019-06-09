@@ -7,11 +7,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import cz.msebera.android.httpclient.Header;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -22,7 +21,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         final EditText et_email = findViewById(R.id.et_email);
         final EditText et_password = findViewById(R.id.et_password);
-        EditText et_repassword = findViewById(R.id.et_repassword);
+        final EditText et_repassword = findViewById(R.id.et_repassword);
         final EditText et_nickname = findViewById(R.id.et_nickname);
 
         Button btn_signup = findViewById(R.id.btn_signup);
@@ -31,33 +30,49 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String dburl = "pn716@cloud-vm-47-204.doc.ac.ic.uk";
-                String del = "";
+                RequestParams params = new RequestParams();
+                params.put("email", et_email.getText().toString());
+                params.put("password", et_password.getText().toString());
+                params.put("nickname", et_nickname.getText().toString());
+                TrippinHttpClient.post("accounts", params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        et_repassword.setText("WAG1GGGGGGGGGGG");
+                    }
 
-                OkHttpClient client = new OkHttpClient();
-
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("email", et_email.getText().toString())
-                        .addFormDataPart("password", et_password.getText().toString())
-                        .addFormDataPart("nickname", et_nickname.getText().toString())
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(dburl)
-                        .post(requestBody)
-                        .build();
-
-                try {
-                    Response response = client.newCall(request).execute();
-
-                    if (!response.isSuccessful()) {
-                        del = "FCUKED IT";
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
 
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                });
+
+//                String dburl = "146.169.47.204:5000/accounts";
+//                String del = "";
+
+//                OkHttpClient client = new OkHttpClient();
+//
+//                RequestBody requestBody = new MultipartBody.Builder()
+//                        .setType(MultipartBody.FORM)
+//                        .addFormDataPart("email", et_email.getText().toString())
+//                        .addFormDataPart("password", et_password.getText().toString())
+//                        .addFormDataPart("nickname", et_nickname.getText().toString())
+//                        .build();
+//
+//                Request request = new Request.Builder()
+//                        .url(dburl)
+//                        .post(requestBody)
+//                        .build();
+//
+//                try {
+//                    Response response = client.newCall(request).execute();
+//
+//                    if (!response.isSuccessful()) {
+//                        del = "FCUKED IT";
+//
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
 
 
 

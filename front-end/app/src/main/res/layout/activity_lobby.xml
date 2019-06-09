@@ -10,11 +10,11 @@
         android:id="@+id/tv_yourcode"
         android:layout_width="280dp"
         android:layout_height="46dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
-        android:hint="Trip Code"
+        android:hint="@string/your_code"
         android:textSize="30sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_tripcode" />
 
@@ -22,11 +22,11 @@
         android:id="@+id/tv_tripcode"
         android:layout_width="198dp"
         android:layout_height="43dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/your_code"
+        android:text="@string/trip_code"
         android:textSize="30sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,33 +34,53 @@
         android:id="@+id/btn_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/start"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/tv_members"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="36dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="292dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/members"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.36" />
 
     <TableLayout
         android:id="@+id/tbl_members"
-        android:layout_width="368dp"
+        android:layout_width="364dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_members">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.65999997">
 
         <!-- Row 1 -->
 
@@ -71,6 +91,7 @@
 
             <TextView
                 android:id="@+id/tv_mem1"
+                android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:background="#dcdcdc"
                 android:gravity="center"
@@ -80,6 +101,7 @@
 
             <TextView
                 android:id="@+id/tv_mem2"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#d3d3d3"
                 android:gravity="center"
@@ -98,6 +120,7 @@
 
             <TextView
                 android:id="@+id/tv_mem3"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#dcdcdc"
                 android:gravity="center"
@@ -107,6 +130,7 @@
 
             <TextView
                 android:id="@+id/tv_mem4"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#d3d3d3"
                 android:gravity="center"
