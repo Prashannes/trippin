@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 import json
 from datetime import datetime, timedelta   
@@ -28,6 +28,13 @@ def add_user(user):
   c.execute("INSERT INTO accounts VALUES('" + user['email'] + "','" + user['password'] + "','" + user['nickname'] + "')")
   conn.commit()
 
+def get_user(user):
+  conn = sqlite3.connect('database.db')
+  c = conn.cursor()
+  result = c.execute("SELECT * FROM accounts WHERE email = '" + user['email'] + "' LIMIT 1")
+  conn.commit()
+  return c.fetchall()
+
 def delete_entry(id):
   conn = sqlite3.connect('database.db')
   c = conn.cursor()
@@ -53,6 +60,9 @@ def index():
   if request.method == 'POST':
     add_user({'email':request.values['email'], 'password':request.values['password'], 'nickname':request.values['nickname']})
     return Response("", status=201, mimetype='application/json')
+  elif request.method == 'GET':
+    usr = json.dumps(get_user({'email':request.values['email'], 'password':request.values['password']}))
+    return Response(usr, status=200, mimetype='application/json')
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True)
