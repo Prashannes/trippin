@@ -41,9 +41,9 @@ def undelete_entry(id):
   conn.commit()
    
 
-drop_table()
+#drop_table()
 create_table()
-add_test_data()
+#add_test_data()
 
 app = Flask(__name__)
 CORS(app)
