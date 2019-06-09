@@ -48,7 +48,7 @@ add_test_data()
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/account', methods=['GET', 'POST', 'PUT'])
+@app.route('/accounts', methods=['GET', 'POST', 'PUT'])
 def index():
   if request.method == 'POST':
     add_user({'email':request.values['email'], 'password':request.values['password'], 'nickname':request.values['nickname']})
