@@ -18,14 +18,14 @@ def create_table():
 def add_test_data():
   conn = sqlite3.connect('database.db')
   c = conn.cursor() 
-  c.execute("INSERT INTO accounts VALUES(" + "user@example.com" + "," + "password" + "," + "usrrrr" + ")")
+  c.execute("INSERT INTO accounts VALUES('user@example.com', 'password', 'usrrrr')")
   conn.commit()
 
 
 def add_user(user):
   conn = sqlite3.connect('database.db')
   c = conn.cursor()
-  c.execute("INSERT INTO accounts VALUES(" + user['email'] + "," + user['password'] + "," + user['nickname'] + ")")
+  c.execute("INSERT INTO accounts VALUES('" + user['email'] + "','" + user['password'] + "','" + user['nickname'] + "')")
   conn.commit()
 
 def delete_entry(id):
