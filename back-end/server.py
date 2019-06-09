@@ -18,14 +18,14 @@ def create_table():
 def add_test_data():
   conn = sqlite3.connect('database.db')
   c = conn.cursor() 
-  c.execute("INSERT INTO accounts VALUES('user@example.com', 'password', 'usrrrr')")
+  c.execute("INSERT INTO accounts VALUES(" + "user@example.com" + "," + "password" + "," + "usrrrr" + ")")
   conn.commit()
 
 
 def add_user(user):
   conn = sqlite3.connect('database.db')
   c = conn.cursor()
-  c.execute("INSERT INTO accounts VALUES('" + user['email'] + "','" + user['password'] + "','" + user['nickname'] + "')")
+  c.execute("INSERT INTO accounts VALUES(" + user['email'] + "," + user['password'] + "," + user['nickname'] + ")")
   conn.commit()
 
 def delete_entry(id):
@@ -41,14 +41,14 @@ def undelete_entry(id):
   conn.commit()
    
 
-drop_table()
+#drop_table()
 create_table()
-add_test_data()
+#add_test_data()
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/account', methods=['GET', 'POST', 'PUT'])
+@app.route('/accounts', methods=['GET', 'POST', 'PUT'])
 def index():
   if request.method == 'POST':
     add_user({'email':request.values['email'], 'password':request.values['password'], 'nickname':request.values['nickname']})
