@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class HomeActivity extends AppCompatActivity {
-    public User user;
+    public String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +21,15 @@ public class HomeActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
-        user = (User) bundle.getSerializable("user");
+        username = (String) bundle.getSerializable("username");
+
+
 
         btn_createtrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("user", user);
+                bundle.putSerializable("username", username);
                 Intent create_intent = new Intent(HomeActivity.this, CreateActivity.class);
                 create_intent.putExtras(bundle);
                 startActivity(create_intent);
@@ -38,7 +40,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("user", user);
+                bundle.putSerializable("username", username);
                 Intent join_intent = new Intent(HomeActivity.this, JoinActivity.class);
                 join_intent.putExtras(bundle);
                 startActivity(join_intent);
@@ -48,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                finish();
             }
         });
 

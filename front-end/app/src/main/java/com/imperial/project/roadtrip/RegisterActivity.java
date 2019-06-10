@@ -19,10 +19,9 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        final EditText et_email = findViewById(R.id.et_email);
+        final EditText et_username = findViewById(R.id.et_usernamereg);
         final EditText et_password = findViewById(R.id.et_password);
         final EditText et_repassword = findViewById(R.id.et_repassword);
-        final EditText et_nickname = findViewById(R.id.et_nickname);
 
         Button btn_signup = findViewById(R.id.btn_signup);
 
@@ -31,13 +30,12 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 RequestParams params = new RequestParams();
-                params.put("email", et_email.getText().toString());
+                params.put("username", et_username.getText().toString());
                 params.put("password", et_password.getText().toString());
-                params.put("nickname", et_nickname.getText().toString());
                 TrippinHttpClient.post("accounts", params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        et_repassword.setText("WAG1GGGGGGGGGGG");
+//                        et_repassword.setText("WAG1GGGGGGGGGGG");
                     }
 
                     @Override
@@ -46,40 +44,8 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
 
-//                String dburl = "146.169.47.204:5000/accounts";
-//                String del = "";
-
-//                OkHttpClient client = new OkHttpClient();
-//
-//                RequestBody requestBody = new MultipartBody.Builder()
-//                        .setType(MultipartBody.FORM)
-//                        .addFormDataPart("email", et_email.getText().toString())
-//                        .addFormDataPart("password", et_password.getText().toString())
-//                        .addFormDataPart("nickname", et_nickname.getText().toString())
-//                        .build();
-//
-//                Request request = new Request.Builder()
-//                        .url(dburl)
-//                        .post(requestBody)
-//                        .build();
-//
-//                try {
-//                    Response response = client.newCall(request).execute();
-//
-//                    if (!response.isSuccessful()) {
-//                        del = "FCUKED IT";
-//
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-
-
-
-
-//                toastMsg();
-//                et_email.setText(del);
-//                finish();
+                toastMsg();
+                finish();
             }
         });
 

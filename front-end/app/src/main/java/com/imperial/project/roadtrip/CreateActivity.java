@@ -27,7 +27,7 @@ import java.util.Random;
 import cz.msebera.android.httpclient.Header;
 
 public class CreateActivity extends AppCompatActivity {
-    public User user;
+    private String username;
     private Trip trip;
     private final String API_KEY = "AIzaSyBeRMPDdjTGoHSGZgfTbVsrwyxfZh7cMQI";
 
@@ -38,17 +38,16 @@ public class CreateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create);
 
         Button btn_next = findViewById(R.id.btn_next);
-        EditText et_destination = findViewById(R.id.et_destination);
+//        EditText et_destination = findViewById(R.id.et_destination);
         // TextView tv_createtrip = findViewById(R.id.tv_createtrip);
 
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
-        user = (User) bundle.getSerializable("user");
+        username = (String) bundle.getSerializable("username");
 
 
         Places.initialize(getApplicationContext(), API_KEY);
-        PlacesClient placesClient = Places.createClient(this);
 
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
@@ -59,7 +58,7 @@ public class CreateActivity extends AppCompatActivity {
             public void onPlaceSelected(@NotNull Place place) {
                 String destLat = Double.toString(place.getLatLng().latitude);
                 String destLong = Double.toString(place.getLatLng().longitude);
-                trip = new Trip(generateTripCode(), "", "", destLong, destLat);
+                trip = new Trip(generateTripCode(), "", "", destLat, destLong);
             }
 
             @Override
@@ -73,17 +72,16 @@ public class CreateActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("user", user);
+                bundle.putSerializable("username", username);
                 bundle.putSerializable("trip", trip);
 
                 RequestParams params = new RequestParams();
                 params.put("tripcode", trip.getTripCode());
-                params.put("email", user.getEmail());
-                params.put("lat", "lat");
+                params.put("username", username);
                 params.put("long", "long");
+                params.put("lat", "lat");
                 params.put("destLong", trip.getDestLong());
                 params.put("destLat", trip.getDestLat());
-                params.put("nickname", user.getNickname());
 
                 TrippinHttpClient.post("trips", params, new AsyncHttpResponseHandler() {
                     @Override
@@ -115,4 +113,6 @@ public class CreateActivity extends AppCompatActivity {
         }
         return result.toString();
     }
+
 }
+

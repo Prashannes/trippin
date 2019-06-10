@@ -34,5 +34,6 @@
     <string name="start">Start</string>
     <string name="empty">Empty</string>
     <string name="trip_code">Trip Code:</string>
+    <string name="refresh">Refresh</string>
 
 </resources>
