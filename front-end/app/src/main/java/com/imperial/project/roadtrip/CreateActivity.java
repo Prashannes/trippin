@@ -10,17 +10,25 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Random;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateActivity extends AppCompatActivity {
     public User user;
-    private String destination;
-    private Place dest;
+    private Trip trip;
     private final String API_KEY = "AIzaSyBeRMPDdjTGoHSGZgfTbVsrwyxfZh7cMQI";
 
 
@@ -40,39 +48,71 @@ public class CreateActivity extends AppCompatActivity {
 
 
         Places.initialize(getApplicationContext(), API_KEY);
+        PlacesClient placesClient = Places.createClient(this);
 
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
-            public void onPlaceSelected(Place place) {
-                dest = place;
-                destination = place.getName();
+            public void onPlaceSelected(@NotNull Place place) {
+                String destLat = Double.toString(place.getLatLng().latitude);
+                String destLong = Double.toString(place.getLatLng().longitude);
+                trip = new Trip(generateTripCode(), "", "", destLong, destLat);
             }
-
 
             @Override
             public void onError(Status status) {
             }
         });
 
+
+
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("user", user);
-                bundle.putSerializable("dest", new PlaceSerializable(dest));
+                bundle.putSerializable("trip", trip);
+
+                RequestParams params = new RequestParams();
+                params.put("tripcode", trip.getTripCode());
+                params.put("email", user.getEmail());
+                params.put("lat", "lat");
+                params.put("long", "long");
+                params.put("destLong", trip.getDestLong());
+                params.put("destLat", trip.getDestLat());
+                params.put("nickname", user.getNickname());
+
+                TrippinHttpClient.post("trips", params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+                    }
+                });
+
                 Intent lobby_intent = new Intent(CreateActivity.this, LobbyActivity.class);
                 lobby_intent.putExtras(bundle);
                 startActivity(lobby_intent);
             }
         });
 
+    }
 
-
-
-
+    public static String generateTripCode() {
+        StringBuilder result = new StringBuilder();
+        Random rand = new Random();
+        for (int i = 0; i < 8; i++) {
+            int random = rand.nextInt(26);
+            char c = ((char) (random + 97));
+            result.append(Character.toString(c));
+        }
+        return result.toString();
     }
 }

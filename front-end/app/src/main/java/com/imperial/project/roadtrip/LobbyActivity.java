@@ -11,13 +11,16 @@ import com.google.android.libraries.places.api.model.Place;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import cz.msebera.android.httpclient.Header;
 
 public class LobbyActivity extends AppCompatActivity {
     public User user;
-    public Place place;
+    public Trip trip;
+    ArrayList<TextView> tv_memList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,31 +30,21 @@ public class LobbyActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         user = (User) bundle.getSerializable("user");
-        place = ((PlaceSerializable) bundle.getSerializable("dest")).getPlace();
+        trip = ((Trip) bundle.getSerializable("trip"));
 
         final TextView tv_yourcode = findViewById(R.id.tv_yourcode);
-        final String tripcode = generateTripCode();
+        tv_memList.add((TextView) findViewById(R.id.tv_mem1));
+        tv_memList.add((TextView) findViewById(R.id.tv_mem2));
+        tv_memList.add((TextView) findViewById(R.id.tv_mem3));
+        tv_memList.add((TextView) findViewById(R.id.tv_mem4));
+        tv_memList.add((TextView) findViewById(R.id.tv_mem5));
+        tv_memList.add((TextView) findViewById(R.id.tv_mem6));
 
-        RequestParams params = new RequestParams();
-        String email = user.getEmail();
-        params.put("tripcode", tripcode);
-        params.put("email", email);
-        params.put("lat", "lat");
-        params.put("long", "long");
-        params.put("destLong", Double.toString(place.getLatLng().longitude));
-        params.put("destLat", Double.toString(place.getLatLng().latitude));
+        tv_yourcode.setText(trip.getTripCode());
 
-        TrippinHttpClient.post("trips", params, new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        tv_yourcode.setText(tripcode);
-                    }
+        updateMembers();
 
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
-                    }
-                });
+        //------------------------------
 
 //        Bundle bundle = new Bundle();
 //        bundle.putSerializable("user", user);
@@ -60,14 +53,40 @@ public class LobbyActivity extends AppCompatActivity {
 //        startActivity(lobby_intent);
     }
 
-    public static String generateTripCode() {
-        StringBuilder result = new StringBuilder();
-        Random rand = new Random();
-        for (int i = 0; i < 8; i++) {
-            int random = rand.nextInt(26);
-            char c = ((char) (random + 97));
-            result.append(Character.toString(c));
-        }
-        return result.toString();
+    public List<String> getTripInfo() {
+        ArrayList<String> result = new ArrayList<>();
+        RequestParams params = new RequestParams();
+        String email = user.getEmail();
+        params.put("tripcode", trip.getTripCode());
+        params.put("email", email);
+
+        TrippinHttpClient.get("trips", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+            }
+        });
+
+
+        return result;
     }
+
+    public List<String> getTripMembers() {
+        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> tripInfo = new ArrayList<>();
+        return result;
+    }
+
+    public void updateMembers() {
+        for (TextView tv : tv_memList) {
+            tv.setText("");
+        }
+    }
+
+
 }
