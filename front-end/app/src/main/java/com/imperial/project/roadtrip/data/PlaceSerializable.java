@@ -1,6 +1,5 @@
-package com.imperial.project.roadtrip;
+package com.imperial.project.roadtrip.data;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
 
 import org.jetbrains.annotations.NotNull;

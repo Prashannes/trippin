@@ -35,5 +35,8 @@
     <string name="empty">Empty</string>
     <string name="trip_code">Trip Code:</string>
     <string name="refresh">Refresh</string>
+    <string name="name">Name:</string>
+    <string name="address">Address:</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoicHJhc2hhbm5lcyIsImEiOiJjandycjQzaWMwMWJoNDhwMWp6ZWJpamduIn0.0wj_oyzjMiF4msNVo4aP_Q</string>
 
 </resources>

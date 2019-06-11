@@ -1,21 +1,20 @@
-package com.imperial.project.roadtrip;
+package com.imperial.project.roadtrip.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.imperial.project.roadtrip.R;
+import com.imperial.project.roadtrip.data.Trip;
+import com.imperial.project.roadtrip.workers.TrippinHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -38,6 +37,8 @@ public class CreateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create);
 
         Button btn_next = findViewById(R.id.btn_next);
+        final TextView tv_placeaddress = findViewById(R.id.tv_placeaddress2);
+        final TextView tv_placename = findViewById(R.id.tv_placename2);
 //        EditText et_destination = findViewById(R.id.et_destination);
         // TextView tv_createtrip = findViewById(R.id.tv_createtrip);
 
@@ -52,13 +53,15 @@ public class CreateActivity extends AppCompatActivity {
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NotNull Place place) {
                 String destLat = Double.toString(place.getLatLng().latitude);
                 String destLong = Double.toString(place.getLatLng().longitude);
                 trip = new Trip(generateTripCode(), "", "", destLat, destLong);
+                tv_placename.setText(place.getName());
+                tv_placeaddress.setText(place.getAddress());
             }
 
             @Override

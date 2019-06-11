@@ -1,24 +1,22 @@
-package com.imperial.project.roadtrip;
+package com.imperial.project.roadtrip.activities;
 
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.libraries.places.api.model.Place;
+import com.imperial.project.roadtrip.R;
+import com.imperial.project.roadtrip.data.Trip;
+import com.imperial.project.roadtrip.workers.TrippinHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.mapbox.mapboxsdk.Mapbox;
 
 import org.json.JSONArray;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -35,9 +33,7 @@ public class LobbyActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         username = (String) bundle.getSerializable("username");
-        trip = ((Trip) bundle.getSerializable("trip"));
-
-
+        trip = (Trip) bundle.getSerializable("trip");
 
         final TextView tv_yourcode = findViewById(R.id.tv_yourcode);
         tv_memList.add((TextView) findViewById(R.id.tv_mem1));
@@ -48,6 +44,7 @@ public class LobbyActivity extends AppCompatActivity {
         tv_memList.add((TextView) findViewById(R.id.tv_mem6));
 
         tv_yourcode.setText(trip.getTripCode());
+
         Button btn_refresh = findViewById(R.id.btn_refresh);
         btn_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,17 +53,20 @@ public class LobbyActivity extends AppCompatActivity {
             }
         });
 
+        Button btn_start = findViewById(R.id.btn_start);
+        btn_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent navigation_intent = new Intent(LobbyActivity.this, NavigationActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("username", username);
+                bundle.putSerializable("trip", trip);
+                navigation_intent.putExtras(bundle);
+                startActivity(navigation_intent);
+            }
+        });
+
         updateMembers();
-
-
-
-        //------------------------------
-
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("user", user);
-//        Intent lobby_intent = new Intent(CreateActivity.this, LobbyActivity.class);
-//        lobby_intent.putExtras(bundle);
-//        startActivity(lobby_intent);
     }
 
 

@@ -1,4 +1,4 @@
-package com.imperial.project.roadtrip;
+package com.imperial.project.roadtrip.data;
 
 import java.io.Serializable;
 
