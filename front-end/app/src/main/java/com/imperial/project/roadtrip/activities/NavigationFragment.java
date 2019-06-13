@@ -46,7 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class NavigationFragment extends Fragment implements OnNavigationReadyCallback, NavigationListener,
-        ProgressChangeListener, LocationListener{
+        ProgressChangeListener{
 
     private static final double ORIGIN_LONGITUDE = -0.1762766;
     private static final double ORIGIN_LATITUDE = 51.4935671;
@@ -68,8 +68,8 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
     public void updateCurrentLocation() {
 
         final RequestParams params = new RequestParams();
-        params.put("tripcode", trip.getTripCode());
         params.put("username", username);
+        params.put("tripcode", trip.getTripCode());
         params.put("lat", trip.getLatitude());
         params.put("long", trip.getLongitude());
         TrippinHttpClient.put("trips", params, new AsyncHttpResponseHandler() {
@@ -219,10 +219,6 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
                             return;
                         }
                         directionsRoute = response.body().routes().get(0);
-//                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-//                                .directionsRoute(directionsRoute)
-//                                .shouldSimulateRoute(true)
-//                                .build();
                         startNavigation();
                     }
 
@@ -246,28 +242,6 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
         navigationView.startNavigation(options);
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        this.trip.setLongitude(Double.toString(location.getLongitude()));
-        this.trip.setLatitude(Double.toString(location.getLatitude()));
-        updateCurrentLocation();
-    }
-
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }
 
 //    private void stopNavigation() {
 //        FragmentActivity activity = getActivity();
