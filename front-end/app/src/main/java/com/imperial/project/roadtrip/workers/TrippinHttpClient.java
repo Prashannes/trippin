@@ -14,6 +14,10 @@ public class TrippinHttpClient {
         client.post(getAbsoluteURL(URLext), params, responseHandler);
     }
 
+    public static void delete(String URLext, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.delete(getAbsoluteURL(URLext), params, responseHandler);
+    }
+
     public static void put(String URLext, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.put(getAbsoluteURL(URLext), params, responseHandler);
     }

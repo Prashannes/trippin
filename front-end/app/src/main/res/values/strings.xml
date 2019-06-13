@@ -38,5 +38,9 @@
     <string name="name">Name:</string>
     <string name="address">Address:</string>
     <string name="mapbox_access_token">pk.eyJ1IjoicHJhc2hhbm5lcyIsImEiOiJjandycjQzaWMwMWJoNDhwMWp6ZWJpamduIn0.0wj_oyzjMiF4msNVo4aP_Q</string>
+    <string name="switchview">Switch View</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

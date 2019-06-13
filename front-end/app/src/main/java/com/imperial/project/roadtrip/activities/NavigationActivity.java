@@ -1,25 +1,39 @@
 package com.imperial.project.roadtrip.activities;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.imperial.project.roadtrip.R;
-import com.imperial.project.roadtrip.data.RouteWrap;
+import com.imperial.project.roadtrip.data.Trip;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
-import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.mapbox.services.android.navigation.ui.v5.NavigationView;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationService;
+import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class NavigationActivity extends AppCompatActivity {
+    String username;
+    Trip trip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,38 +41,26 @@ public class NavigationActivity extends AppCompatActivity {
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_navigation);
 
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        username = (String) bundle.getSerializable("username");
+        trip = (Trip) bundle.getSerializable("trip");
 
-        Point origin = Point.fromLngLat(Double.parseDouble("-0.177066"), Double.parseDouble("51.4986929"));
-        Point destination = Point.fromLngLat(Double.parseDouble("-0.1761444"), Double.parseDouble("51.4941614"));
+        NavigationFragment navigationFragment = (NavigationFragment) getSupportFragmentManager().findFragmentById(R.id.frag_nav);
+        navigationFragment.setTrip(trip);
 
-        NavigationRoute.builder(this)
-                .accessToken(Mapbox.getAccessToken())
-                .origin(origin)
-                .destination(destination)
-                .build()
-                .getRoute(new Callback<DirectionsResponse>() {
-                    @Override
-                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                        if (response.body() == null) {
-                            return;
-                        } else if (response.body().routes().size() == 0) {
-                            return;
-                        }
-                        DirectionsRoute route = response.body().routes().get(0);
-                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                                .directionsRoute(route)
-                                .shouldSimulateRoute(true)
-                                .build();
-                        NavigationLauncher.startNavigation(NavigationActivity.this, options);
-                    }
+        Button btn_switchview = findViewById(R.id.btn_switchview);
+//        btn_switchview.setText(getSupportFragmentManager().getFragments().get(0).getClass().getCanonicalName());
 
-                    @Override
-                    public void onFailure(Call<DirectionsResponse> call, Throwable t) {
 
-                    }
-                });
+        btn_switchview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MapFragment mapFragment = new MapFragment();
+                mapFragment.show(getSupportFragmentManager(), "Dialog_Fragment");
+            }
+        });
 
     }
-
 
 }

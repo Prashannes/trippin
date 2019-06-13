@@ -54,6 +54,7 @@ public class LobbyActivity extends AppCompatActivity {
         });
 
         Button btn_start = findViewById(R.id.btn_start);
+        btn_start.setText(trip.getDestLong());
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,7 +75,7 @@ public class LobbyActivity extends AppCompatActivity {
     public void onBackPressed() {
         RequestParams params = new RequestParams();
         params.put("username", username);
-        TrippinHttpClient.put("trips", params, new AsyncHttpResponseHandler() {
+        TrippinHttpClient.delete("trips", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 

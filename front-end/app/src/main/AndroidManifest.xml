@@ -28,7 +28,7 @@
         <activity android:name=".activities.CreateActivity" />
         <activity android:name=".activities.JoinActivity" />
         <activity android:name=".activities.LobbyActivity" />
-        <activity android:name=".activities.NavigationActivity"></activity>
+        <activity android:name=".activities.NavigationActivity" />
     </application>
 
 </manifest>
