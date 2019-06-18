@@ -180,6 +180,7 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
     public void onProgressChange(Location location, RouteProgress routeProgress) {
         this.trip.setLongitude(Double.toString(location.getLongitude()));
         this.trip.setLatitude(Double.toString(location.getLatitude()));
+
         updateCurrentLocation();
 //        boolean isInTunnel = routeProgress.inTunnel();
 //        boolean wasInTunnel = wasInTunnel();
