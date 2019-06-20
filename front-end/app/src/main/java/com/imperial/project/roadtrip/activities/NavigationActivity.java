@@ -160,7 +160,7 @@ public class NavigationActivity extends AppCompatActivity {
         tv_msg.setText(name + ": " + msg);
 
         Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setGravity(Gravity.TOP, 0, 0);
         toast.setDuration(Toast.LENGTH_LONG);
         toast.setView(layout);
         toast.show();
