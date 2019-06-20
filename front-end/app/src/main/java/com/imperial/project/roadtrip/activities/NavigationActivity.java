@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -123,10 +125,20 @@ public class NavigationActivity extends AppCompatActivity {
                     for (int i = 0; i < result.length(); i++) {
                         String name = result.getJSONArray(i).get(0).toString();
                         String msg = result.getJSONArray(i).get(6).toString();
-                        if (msg.length() > 0 && !lastMessages.get(name).equals(msg)) {
-                            displayMsg(name, msg, "");
-                            lastMessages.put(name, msg);
+                        if (msg.length() > 0) {
+                            if (lastMessages.containsKey(name)) {
+                                if (!lastMessages.get(name).equals(msg)) {
+                                    lastMessages.put(name, msg);
+//                                    displayMsg(name, msg, "");
+                                    displayMsg(name, msg);
+                                }
+                            } else {
+                                lastMessages.put(name, msg);
+                                displayMsg(name, msg);
+//                                displayMsg(name, msg, "");
+                            }
                         }
+
                     }
                 } catch (Exception e) {
                 }
@@ -140,13 +152,17 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     public void displayMsg(String name, String msg) {
-        Toast toast = new Toast(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.fragment_chat,
+                (ViewGroup) findViewById(R.id.layout_toast));
+
+        TextView tv_msg = (TextView) layout.findViewById(R.id.tv_msg);
+        tv_msg.setText(name + ": " + msg);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
         toast.setDuration(Toast.LENGTH_LONG);
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.fragment_chat, null);
-        TextView text = findViewById(R.id.tv_msg);
-        text.setText(name + ": " + msg);
-        toast.setView(view);
+        toast.setView(layout);
         toast.show();
     }
 
