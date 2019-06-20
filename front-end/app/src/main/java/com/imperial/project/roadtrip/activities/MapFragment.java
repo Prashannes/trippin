@@ -3,6 +3,14 @@ package com.imperial.project.roadtrip.activities;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Picture;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,21 +19,26 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.Marker;
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.imperial.project.roadtrip.R;
 import com.imperial.project.roadtrip.data.Trip;
+import com.imperial.project.roadtrip.data.TripMember;
 import com.imperial.project.roadtrip.workers.TrippinHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -50,10 +63,16 @@ public class MapFragment extends DialogFragment {
     private MapView mapView;
     private View rootView;
     private Trip trip;
+    private List<TripMember> tripMembers = new ArrayList<>();
+    private MapboxMap map;
+    Handler updateHandler = new Handler();
+    int updateDelay = 3*1000;
+    Runnable runnable;
 
     public MapView getMapView() {
         return this.mapView;
     }
+
 
     public void setTrip(Trip trip) {
         this.trip = trip;
@@ -71,70 +90,128 @@ public class MapFragment extends DialogFragment {
 
         mapView = rootView.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-        updateMap();
-    }
 
-    public void updateMap() {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
-//                                            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.4935671, -0.1762766), 16));
-
-                        final RequestParams params = new RequestParams();
-                        params.put("tripcode", trip.getTripCode());
-                        TrippinHttpClient.get("trips", params, new AsyncHttpResponseHandler() {
+                        map = mapboxMap;
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.4935671, -0.1762766), 12));
+                        updateLocations();
+                        updateHandler.postDelayed(runnable = new Runnable() {
                             @Override
-                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                try {
-                                    JSONArray result = new JSONArray(new String(responseBody));
-
-                                    LatLngBounds.Builder latLngBoundsBuilder = new LatLngBounds.Builder();
-                                    for (com.mapbox.mapboxsdk.annotations.Marker m : mapboxMap.getMarkers()) {
-                                        mapboxMap.removeMarker(m);
-                                    }
-
-//                                    SymbolLayer layer = new SymbolLayer("", "");
-
-
-                                    for (int i = 0; i < result.length(); i++) {
-                                        String name = result.getJSONArray(i).get(0).toString();
-                                        String latitude = result.getJSONArray(i).get(1).toString();
-                                        String longitude = result.getJSONArray(i).get(2).toString();
-                                        LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
-
-                                        latLngBoundsBuilder.include(latLng);
-                                        mapboxMap.addMarker(new MarkerOptions().position(latLng).title(name));
-                                        mapboxMap.addMarker(new MarkerOptions().position(new LatLng(51.4935671, -0.1762766)));
-                                    }
-
-                                    mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.4935671, -0.1762766), 12));
-
-                                } catch (Exception e) {
-                                }
+                            public void run() {
+//                if (tripMembers.size() > 0) {
+                                updateLocations();
+                                updateHandler.postDelayed(this, updateDelay);
+//                }
                             }
-
-                            @Override
-                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            }
-
-                        });
+                        }, updateDelay);
                     }
                 });
             }
         });
-
-
     }
 
+    public void updateLocations() {
+        final RequestParams params = new RequestParams();
+        params.put("tripcode", trip.getTripCode());
+        TrippinHttpClient.get("trips", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                try {
+                    JSONArray result = new JSONArray(new String(responseBody));
+                    if (tripMembers.size() == 0) {
+                        for (int i = 0; i < result.length(); i++) {
+                            String name = result.getJSONArray(i).get(0).toString();
+                            String latitude = result.getJSONArray(i).get(1).toString();
+                            String longitude = result.getJSONArray(i).get(2).toString();
+                            LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                            String eta = result.getJSONArray(i).get(5).toString();
 
+                            IconFactory mIconFactory = IconFactory.getInstance(getActivity());
+                            Icon icon = mIconFactory.fromBitmap(createImage(i, name.substring(0,1)));
 
+//                            IconFactory mIconFactory = IconFactory.getInstance(getActivity());
+//                            Icon icon = mIconFactory.defaultMarker();
 
+                            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(name + "\n" + eta).icon(icon);
+                            Marker m = map.addMarker(markerOptions);
+                            tripMembers.add(new TripMember(name, latLng, eta, m));
+                        }
+                    } else {
+                        for (int i = 0; i < result.length(); i++) {
+                            String name = result.getJSONArray(i).get(0).toString();
+                            String latitude = result.getJSONArray(i).get(1).toString();
+                            String longitude = result.getJSONArray(i).get(2).toString();
+                            LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                            String eta = result.getJSONArray(i).get(5).toString();
+                            tripMembers.get(i).setLatLng(latLng);
+                            tripMembers.get(i).setETA(eta);
+                            tripMembers.get(i).getMarker().setPosition(latLng);
+                            tripMembers.get(i).getMarker().setTitle(name + "\n" + eta);
+//                            map.updateMarker(tripMembers.get(i).getMarker());
+                        }
+                    }
 
-//        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+                } catch (Exception e) { }
+            }
 
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            }
+        });
+    }
+
+    public Bitmap createImage(int color, String name) {
+        switch (color) {
+            case 0:
+                color = Color.BLUE;
+                break;
+            case 1:
+                color = Color.GREEN;
+                break;
+            case 2:
+                color = Color.RED;
+                break;
+            case 3:
+                color = Color.MAGENTA;
+                break;
+            case 4:
+                color = Color.YELLOW;
+                break;
+            default:
+                color = Color.BLACK;
+        }
+
+        int width = 100;
+        int height = 100;
+        int textSize = 72;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint2 = new Paint();
+        paint2.setColor(color);
+        canvas.drawCircle(50, 50, 50, paint2);
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(textSize);
+        paint.setTextScaleX(1);
+        canvas.drawText(name, (width - textSize + 20)/2, (height + textSize)/2, paint);
+        return bitmap;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        updateHandler.removeCallbacks(runnable);
+        super.onPause();
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -143,21 +220,6 @@ public class MapFragment extends DialogFragment {
         return builder.create();
     }
 
-    private class UpdateMap implements Runnable {
-        private MapboxMap map;
-        private Handler handler;
-
-        public UpdateMap(MapboxMap map, Handler handler) {
-            this.map = map;
-            this.handler = handler;
-        }
-
-        @Override
-        public void run() {
-//            map.
-            handler.postDelayed(this, 2500);
-        }
-    }
 
 }
 

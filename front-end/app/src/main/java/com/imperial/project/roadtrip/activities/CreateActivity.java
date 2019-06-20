@@ -1,6 +1,8 @@
 package com.imperial.project.roadtrip.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +31,12 @@ public class CreateActivity extends AppCompatActivity {
     private String username;
     private Trip trip;
     private final String API_KEY = "AIzaSyBeRMPDdjTGoHSGZgfTbVsrwyxfZh7cMQI";
+    Handler createHandler = new Handler();
+    Runnable runnable;
+    private String destLong;
+    private String destLat;
+
+
 
 
     @Override
@@ -39,9 +47,6 @@ public class CreateActivity extends AppCompatActivity {
         Button btn_next = findViewById(R.id.btn_next);
         final TextView tv_placeaddress = findViewById(R.id.tv_placeaddress2);
         final TextView tv_placename = findViewById(R.id.tv_placename2);
-//        EditText et_destination = findViewById(R.id.et_destination);
-        // TextView tv_createtrip = findViewById(R.id.tv_createtrip);
-
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
@@ -57,9 +62,8 @@ public class CreateActivity extends AppCompatActivity {
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NotNull Place place) {
-                String destLat = Double.toString(place.getLatLng().latitude);
-                String destLong = Double.toString(place.getLatLng().longitude);
-                trip = new Trip(generateTripCode(), "", "", destLat, destLong);
+                destLat = Double.toString(place.getLatLng().latitude);
+                destLong = Double.toString(place.getLatLng().longitude);
                 tv_placename.setText(place.getName());
                 tv_placeaddress.setText(place.getAddress());
             }
@@ -74,36 +78,51 @@ public class CreateActivity extends AppCompatActivity {
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                trip = new Trip(generateTripCode(), "", "", destLat, destLong);
+                createHandler.post(runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        createTrip();
+                    }
+                });
+
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("username", username);
                 bundle.putSerializable("trip", trip);
-
-                RequestParams params = new RequestParams();
-                params.put("tripcode", trip.getTripCode());
-                params.put("username", username);
-                params.put("long", "long");
-                params.put("lat", "lat");
-                params.put("destLong", trip.getDestLong());
-                params.put("destLat", trip.getDestLat());
-
-                TrippinHttpClient.post("trips", params, new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
-                    }
-                });
 
                 Intent lobby_intent = new Intent(CreateActivity.this, LobbyActivity.class);
                 lobby_intent.putExtras(bundle);
                 startActivity(lobby_intent);
             }
         });
+    }
 
+    @Override
+    protected void onPause() {
+        createHandler.removeCallbacks(runnable);
+        super.onPause();
+    }
+
+    public void createTrip() {
+        RequestParams params = new RequestParams();
+        params.put("tripcode", trip.getTripCode());
+        params.put("username", username);
+        params.put("long", "long");
+        params.put("lat", "lat");
+        params.put("destLong", trip.getDestLong());
+        params.put("destLat", trip.getDestLat());
+
+        TrippinHttpClient.post("trips", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+            }
+        });
     }
 
     public static String generateTripCode() {

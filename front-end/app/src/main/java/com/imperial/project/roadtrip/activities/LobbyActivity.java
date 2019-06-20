@@ -1,6 +1,7 @@
 package com.imperial.project.roadtrip.activities;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +25,9 @@ public class LobbyActivity extends AppCompatActivity {
     public String username;
     public Trip trip;
     ArrayList<TextView> tv_memList = new ArrayList<>();
+    Handler membersHandler = new Handler();
+    int membersDelay = 5*1000;
+    Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +49,16 @@ public class LobbyActivity extends AppCompatActivity {
 
         tv_yourcode.setText(trip.getTripCode());
 
-        Button btn_refresh = findViewById(R.id.btn_refresh);
-        btn_refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateMembers();
-            }
-        });
+//        Button btn_refresh = findViewById(R.id.btn_refresh);
+//        btn_refresh.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                updateMembers();
+//            }
+//        });
 
         Button btn_start = findViewById(R.id.btn_start);
-        btn_start.setText(trip.getDestLong());
+//        btn_start.setText(trip.getDestLong());
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,9 +71,26 @@ public class LobbyActivity extends AppCompatActivity {
             }
         });
 
-        updateMembers();
     }
 
+    @Override
+    protected void onResume() {
+        updateMembers();
+        membersHandler.postDelayed(runnable = new Runnable() {
+            @Override
+            public void run() {
+                updateMembers();
+                membersHandler.postDelayed(this, membersDelay);
+            }
+        }, membersDelay);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        membersHandler.removeCallbacks(runnable);
+        super.onPause();
+    }
 
     @Override
     public void onBackPressed() {

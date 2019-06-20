@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +55,9 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
 
     private NavigationView navigationView;
     private DirectionsRoute directionsRoute;
+    Handler updateHandler = new Handler();
+    int updateDelay = 3*1000;
+    Runnable runnable;
 
     String username;
     Trip trip;
@@ -66,12 +71,12 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
     }
 
     public void updateCurrentLocation() {
-
         final RequestParams params = new RequestParams();
         params.put("username", username);
         params.put("tripcode", trip.getTripCode());
         params.put("lat", trip.getLatitude());
         params.put("long", trip.getLongitude());
+        params.put("eta", trip.getETA());
         TrippinHttpClient.put("trips", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -88,7 +93,6 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        updateNightMode();
         navigationView = view.findViewById(R.id.navigation_view_fragment);
         navigationView.onCreate(savedInstanceState);
         navigationView.initialize(this);
@@ -110,6 +114,14 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
 
     @Override
     public void onResume() {
+        updateCurrentLocation();
+        updateHandler.postDelayed(runnable = new Runnable() {
+            @Override
+            public void run() {
+                updateCurrentLocation();
+                updateHandler.postDelayed(this, updateDelay);
+            }
+        }, updateDelay);
         super.onResume();
         navigationView.onResume();
     }
@@ -130,6 +142,7 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
 
     @Override
     public void onPause() {
+        updateHandler.removeCallbacks(runnable);
         super.onPause();
         navigationView.onPause();
     }
@@ -180,30 +193,13 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
     public void onProgressChange(Location location, RouteProgress routeProgress) {
         this.trip.setLongitude(Double.toString(location.getLongitude()));
         this.trip.setLatitude(Double.toString(location.getLatitude()));
-
-        updateCurrentLocation();
-//        boolean isInTunnel = routeProgress.inTunnel();
-//        boolean wasInTunnel = wasInTunnel();
-//        if (isInTunnel) {
-//            if (!wasInTunnel) {
-//                updateWasInTunnel(true);
-//                updateCurrentNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//            }
-//        } else {
-//            if (wasInTunnel) {
-//                updateWasInTunnel(false);
-//                updateCurrentNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-//            }
-//        }
+        int totalSecs = (int) routeProgress.durationRemaining();
+        int hours = totalSecs / 3600;
+        int minutes = (totalSecs % 3600) / 60;
+        this.trip.setETA(hours + "h " + minutes + "m");
+//        updateCurrentLocation();
     }
 
-//    private void updateNightMode() {
-//        if (wasNavigationStopped()) {
-//            updateWasNavigationStopped(false);
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-//            getActivity().recreate();
-//        }
-//    }
 
     private void fetchRoute(Point origin, Point destination) {
         NavigationRoute.builder(getContext())
@@ -242,49 +238,4 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
                 .build();
         navigationView.startNavigation(options);
     }
-
-
-//    private void stopNavigation() {
-//        FragmentActivity activity = getActivity();
-//        if (activity != null && activity instanceof FragmentNavigationActivity) {
-//            FragmentNavigationActivity fragmentNavigationActivity = (FragmentNavigationActivity) activity;
-//            fragmentNavigationActivity.showPlaceholderFragment();
-//            fragmentNavigationActivity.showNavigationFab();
-//            updateWasNavigationStopped(true);
-//            updateWasInTunnel(false);
-//        }
-//    }
-//
-//    private boolean wasInTunnel() {
-//        Context context = getActivity();
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        return preferences.getBoolean(context.getString(R.string.was_in_tunnel), false);
-//    }
-//
-//    private void updateWasInTunnel(boolean wasInTunnel) {
-//        Context context = getActivity();
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        SharedPreferences.Editor editor = preferences.edit();
-//        editor.putBoolean(context.getString(R.string.was_in_tunnel), wasInTunnel);
-//        editor.apply();
-//    }
-//
-//    private void updateCurrentNightMode(int nightMode) {
-//        AppCompatDelegate.setDefaultNightMode(nightMode);
-//        getActivity().recreate();
-//    }
-//
-//    private boolean wasNavigationStopped() {
-//        Context context = getActivity();
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        return preferences.getBoolean(getString(R.string.was_navigation_stopped), false);
-//    }
-//
-//    public void updateWasNavigationStopped(boolean wasNavigationStopped) {
-//        Context context = getActivity();
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        SharedPreferences.Editor editor = preferences.edit();
-//        editor.putBoolean(getString(R.string.was_navigation_stopped), wasNavigationStopped);
-//        editor.apply();
-//    }
 }

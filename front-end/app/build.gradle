@@ -30,7 +30,10 @@ android {
 repositories {
     mavenCentral()
     maven { url 'https://mapbox.bintray.com/mapbox' }
+    maven { url 'http://dl.bintray.com/amulyakhare/maven'}
+
 }
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -46,6 +49,5 @@ dependencies {
     implementation 'com.google.android.libraries.places:places:1.1.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.39.0'
     implementation 'com.android.support:multidex:1.0.3'
-
-
+    implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 }

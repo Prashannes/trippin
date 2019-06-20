@@ -8,6 +8,8 @@ public class Trip implements Serializable{
     private String longitude;
     private final String destLat;
     private final String destLong;
+    private String ETA = "";
+
 
     public Trip(String tripCode, String latitude, String longitude, String destLat, String destLong) {
         this.tripCode = tripCode;
@@ -15,6 +17,14 @@ public class Trip implements Serializable{
         this.longitude = longitude;
         this.destLat = destLat;
         this.destLong = destLong;
+    }
+
+    public String getETA() {
+        return ETA;
+    }
+
+    public void setETA(String ETA) {
+        this.ETA = ETA;
     }
 
     public void setLatitude(String latitude) {
