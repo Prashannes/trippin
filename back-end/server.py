@@ -97,9 +97,10 @@ def index2():
     end_trip({'username':request.values['username']})
     return Response("", status=200, mimetype='application/json')
   elif request.method == 'PUT':
-    if request.args.get("msg") is None:
+    msgParam = request.form.get('msg')
+    if msgParam is None:
       update_location({'username':request.values['username'], 'tripcode':request.values['tripcode'], 'lat':request.values['lat'], 'long':request.values['long'], 'eta':request.values['eta']})
-      return Response("", status=202, mimetype='application/json')
+      return Response("", status=201, mimetype='application/json')
     else:
       update_msg({'username':request.values['username'], 'tripcode':request.values['tripcode'], 'msg':request.values['msg']})
       return Response("", status=201, mimetype='application/json')
