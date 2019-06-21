@@ -72,12 +72,14 @@ def test(numTrips):
     join_trip({'tripcode':str(count), 'username':"", 'lat':"", 'long':"", 'destLat':"", 'destLong':""})
   end = time.time()
   drop_trips_table()
+  create_trips_table()
   return (end - start)
 
 def testRunner():
   f = open("data.txt","w+")
-  for count in range(0, 500):
-    f.write(str(count) + ", " + str(test(count) + "\n"))
+  for count in range(0, 20000, 500):
+    f.write(str(count) + ", " + str(test(count)) + "\n")
+    print(count)
   f.close()
 
 
