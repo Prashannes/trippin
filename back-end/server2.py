@@ -77,7 +77,7 @@ def test(numTrips):
 def testRunner():
   f = open("data.txt","w+")
   for count in range(0, 500):
-    f.write(str(count) + ", " + str(test(count) + ""))
+    f.write(str(count) + ", " + str(test(count) + "\n"))
   f.close()
 
 
