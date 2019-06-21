@@ -67,19 +67,18 @@ def update_msg(trip):
   conn.commit()
 
 def test(numTrips):
+  f = open("data.txt","w+")
   start = time.time()
   for count in range(0,numTrips):
     join_trip({'tripcode':str(count), 'username':"", 'lat':"", 'long':"", 'destLat':"", 'destLong':""})
-  end = time.time()
-  drop_trips_table()
-  create_trips_table()
-  return (end - start)
+    end = time.time()
+    f.write(str(count) + ", " + str(end-start) + "\n")
+    print(count)
+
 
 def testRunner():
   f = open("data.txt","w+")
-  for count in range(0, 20000, 500):
-    f.write(str(count) + ", " + str(test(count)) + "\n")
-    print(count)
+  f.write(str(count) + ", " + str(test(count)) + "\n")
   f.close()
 
 
@@ -90,4 +89,4 @@ drop_trips_table()
 drop_accounts_table()
 create_accounts_table()
 create_trips_table()
-testRunner()
+test(100000)
